@@ -141,4 +141,19 @@ jobs:
 
       - name: Run cyclic Docker script
         if: env.SHOULD_RUN == 'true'
+        env:
+          SESSION_COPY_DELAY: 2400 # Wait 40 minutes before copying sessions
+          ENABLE_SESSION_UPLOAD: 'false' # Set to 'false' to disable artifact upload
+          ENABLE_SESSION_RESTORE: 'true' # Set to 'true' to enable session restore (and disable upload)
+          SESSION_RESTORE_URL_ONE: ${{ secrets.SESSION_RESTORE_URL_ONE }}
+          SESSION_RESTORE_URL_TWO: ${{ secrets.SESSION_RESTORE_URL_TWO }}
+          SESSION_RESTORE_URL_THREE: ${{ secrets.SESSION_RESTORE_URL_THREE }}
         run: ./script.sh
+
+      - name: Upload Sessions Artifact
+        if: env.SHOULD_RUN == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: sessions-zip
+          path: sessions.zip
+          retention-days: 5
